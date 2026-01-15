@@ -87,7 +87,7 @@ curl -X POST "https://space.ai-builders.com/backend/v1/deployments" \
 
    # 4. Deploy via AI Builder API
    curl -X POST "https://space.ai-builders.com/backend/v1/deployments" \
-     -H "Authorization: Bearer sk_c806f15a_00c8115f3cb021c8de40cb4dd9ff2a704f85" \
+     -H "Authorization: Bearer API Key" \
      -H "Content-Type: application/json" \
      -d '{
        "repo_url": "https://github.com/CocoHusky/AI-Builder",
