@@ -14,6 +14,8 @@
  */
 
 const personalityConfig = require('./personality-config');
+const fs = require('fs').promises;
+const path = require('path');
 
 class PersonalityGuard {
   constructor() {
@@ -48,7 +50,10 @@ class PersonalityGuard {
       qualityMetrics: this.config.qualityThresholds
     };
 
-    // Learning and adaptation data
+    // Learning data file path
+    this.learningDataFile = path.join(__dirname, 'coco-learning-data.json');
+
+    // Initialize learning data (load from file or create defaults)
     this.learningData = {
       successfulResponses: [],
       failedResponses: [],
@@ -62,6 +67,9 @@ class PersonalityGuard {
       preferredBehaviors: [],
       validationAdjustments: {}
     };
+
+    // Load learning data from file on startup
+    this.loadLearningData();
   }
 
   /**
@@ -389,9 +397,66 @@ ${basePrompt}`;
   }
 
   /**
+   * Load learning data from file on startup
+   */
+  async loadLearningData() {
+    try {
+      const data = await fs.readFile(this.learningDataFile, 'utf8');
+      const parsed = JSON.parse(data);
+
+      // Validate and merge loaded data
+      if (parsed.learningData) {
+        this.learningData = {
+          ...this.learningData,
+          ...parsed.learningData
+        };
+      }
+
+      if (parsed.adaptationRules) {
+        this.adaptationRules = {
+          ...this.adaptationRules,
+          ...parsed.adaptationRules
+        };
+      }
+
+      console.log('✅ Loaded learning data from file:', this.learningData.successfulResponses.length, 'successful,', this.learningData.failedResponses.length, 'failed responses');
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.error('❌ Error loading learning data:', error.message);
+      } else {
+        console.log('📄 No existing learning data file found, starting fresh');
+      }
+    }
+  }
+
+  /**
+   * Save learning data to file
+   */
+  async saveLearningData() {
+    try {
+      const dataToSave = {
+        timestamp: new Date().toISOString(),
+        learningData: this.learningData,
+        adaptationRules: this.adaptationRules,
+        metadata: {
+          totalSuccessful: this.learningData.successfulResponses.length,
+          totalFailed: this.learningData.failedResponses.length,
+          personalityStrength: this.calculatePersonalityStrength(),
+          lastSaved: new Date().toISOString()
+        }
+      };
+
+      await fs.writeFile(this.learningDataFile, JSON.stringify(dataToSave, null, 2));
+      console.log('💾 Learning data saved to file');
+    } catch (error) {
+      console.error('❌ Error saving learning data:', error.message);
+    }
+  }
+
+  /**
    * Update learning data for future improvements
    */
-  updateLearningData(originalResponse, processedResponse, action, reason) {
+  async updateLearningData(originalResponse, processedResponse, action, reason) {
     const learningEntry = {
       timestamp: new Date().toISOString(),
       originalResponse: originalResponse.substring(0, 200), // Truncate for storage
@@ -414,6 +479,9 @@ ${basePrompt}`;
     if (this.learningData.failedResponses.length > 100) {
       this.learningData.failedResponses.shift();
     }
+
+    // Save to file after each update
+    await this.saveLearningData();
   }
 
   /**
@@ -477,6 +545,9 @@ ${basePrompt}`;
 
       // Record adaptation timestamp
       this.learningData.lastAdapted = new Date().toISOString();
+
+      // Save adaptation changes to file
+      await this.saveLearningData();
 
       console.log('✅ Personality adaptation complete!');
       console.log(`🎯 New personality strength: ${(this.calculatePersonalityStrength() * 100).toFixed(1)}%`);
