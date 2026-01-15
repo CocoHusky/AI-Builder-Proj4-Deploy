@@ -39,6 +39,13 @@ try {
           };
         }
 
+        if (parsed.adaptationRules) {
+          this.adaptationRules = {
+            ...this.adaptationRules,
+            ...parsed.adaptationRules
+          };
+        }
+
         console.log('✅ Loaded learning data from file:', this.learningData.successfulResponses.length, 'responses');
       } catch (error) {
         if (error.code !== 'ENOENT') {
@@ -49,12 +56,14 @@ try {
       }
     }
 
-    async saveLearningDataToFile() {
-      try {
-        const fs = require('fs').promises;
+  async saveLearningDataToFile() {
+    console.log('🔄 saveLearningDataToFile called');
+    try {
+      const fs = require('fs').promises;
         const dataToSave = {
           timestamp: new Date().toISOString(),
           learningData: this.learningData,
+          adaptationRules: this.adaptationRules,
           metadata: {
             totalSuccessful: this.learningData.successfulResponses.length,
             totalFailed: this.learningData.failedResponses.length,
@@ -62,6 +71,7 @@ try {
           }
         };
 
+        console.log('💾 Saving data with adaptationRules:', !!this.adaptationRules, 'keys:', this.adaptationRules ? Object.keys(this.adaptationRules) : 'null');
         await fs.writeFile(this.learningDataFile, JSON.stringify(dataToSave, null, 2));
         console.log('💾 Learning data saved to file');
       } catch (error) {
@@ -95,9 +105,21 @@ ${basePrompt}`;
       }
 
       // Save to file
+      console.log('💾 About to save learning data...');
       this.saveLearningDataToFile().catch(error => {
         console.error('❌ Error saving learning data:', error.message);
       });
+
+      // Check if adaptation is needed (every 10 responses)
+      const responseCount = this.learningData.successfulResponses.length;
+      const shouldTrigger = responseCount % 10 === 0 && responseCount > 0;
+
+      console.log(`📊 Response ${responseCount}: shouldTrigger=${shouldTrigger} (${responseCount} % 10 = ${responseCount % 10})`);
+
+      if (shouldTrigger) {
+        console.log(`🐕 TRIGGERING ADAPTATION: ${responseCount} responses`);
+        this.adaptPersonality();
+      }
 
       return {
         action: 'enhance',
@@ -107,21 +129,99 @@ ${basePrompt}`;
     }
 
     getPersonalityStats() {
+      const totalProcessed = this.learningData.successfulResponses.length + this.learningData.failedResponses.length;
+      const successRate = totalProcessed > 0 ? this.learningData.successfulResponses.length / totalProcessed : 0;
+
       return {
-        totalProcessed: this.learningData.successfulResponses.length + this.learningData.failedResponses.length,
-        successRate: this.learningData.successfulResponses.length > 0 ? 1.0 : 0,
+        totalProcessed,
+        successRate,
         commonFailureReasons: {},
-        personalityStrength: 0.5 // Basic implementation
+        personalityStrength: this.calculatePersonalityStrength()
       };
     }
 
     getAdaptationStats() {
       return {
-        adaptationRules: {},
+        adaptationRules: this.adaptationRules || {},
         lastAdapted: this.learningData.lastAdapted,
-        validationThresholds: {},
-        personalityStrength: 0.5
+        validationThresholds: this.validationThresholds || {},
+        personalityStrength: this.calculatePersonalityStrength()
       };
+    }
+
+    /**
+     * Calculate personality strength based on recent performance
+     */
+    calculatePersonalityStrength() {
+      if (this.learningData.successfulResponses.length === 0) return 0;
+      const recentSuccesses = this.learningData.successfulResponses.slice(-20);
+      return recentSuccesses.length / 20;
+    }
+
+    /**
+     * Active adaptation system - automatically improve based on learning data
+     */
+    adaptPersonality() {
+      const stats = this.getPersonalityStats();
+      console.log(`🐕 adaptPersonality called: ${stats.totalProcessed} total, ${this.learningData.successfulResponses.length} successful`);
+
+      // Adapt if we have enough data (20+ responses) OR every 50 responses
+      const shouldAdapt = stats.totalProcessed >= 20 ||
+                         (this.learningData.successfulResponses.length % 50 === 0 && this.learningData.successfulResponses.length > 0);
+
+      console.log(`🐕 shouldAdapt: ${shouldAdapt} (total >= 20: ${stats.totalProcessed >= 20}, modulo 50: ${this.learningData.successfulResponses.length % 50 === 0})`);
+
+      if (shouldAdapt) {
+        console.log('🐕 Adapting personality based on learning data...');
+        console.log(`📊 Current: ${stats.successRate.toFixed(2)}% success rate`);
+
+        // Initialize adaptation tracking
+        this.adaptationRules = this.adaptationRules || {};
+        this.validationThresholds = this.validationThresholds || {
+          dogWordRatio: 0.08,
+          emojiRatio: 0.015
+        };
+
+        // Learn from successful patterns
+        this.learnFromSuccessfulResponses();
+
+        // Record adaptation
+        this.learningData.lastAdapted = new Date().toISOString();
+
+        console.log('✅ Personality adaptation complete!');
+        console.log(`🎯 New personality strength: ${(this.calculatePersonalityStrength() * 100).toFixed(1)}%`);
+      }
+    }
+
+    /**
+     * Learn patterns from successful responses
+     */
+    learnFromSuccessfulResponses() {
+      const successfulResponses = this.learningData.successfulResponses.slice(-30);
+
+      // Count emoji usage in successful responses
+      let totalEmojis = 0;
+      let dogEmojis = 0;
+
+      successfulResponses.forEach(entry => {
+        const response = entry.processedResponse;
+        const emojiMatches = response.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu) || [];
+        totalEmojis += emojiMatches.length;
+
+        // Count dog-specific emojis
+        const dogEmojiMatches = response.match(/[🐕🐶🐾]/g) || [];
+        dogEmojis += dogEmojiMatches.length;
+      });
+
+      // Calculate emoji ratios
+      const avgEmojis = totalEmojis / successfulResponses.length;
+      const dogEmojiRatio = dogEmojis / totalEmojis;
+
+      // Store learned preferences
+      this.adaptationRules.preferredEmojiRatio = avgEmojis;
+      this.adaptationRules.dogEmojiPreference = dogEmojiRatio;
+
+      console.log(`🎯 Learned: ${avgEmojis.toFixed(1)} emojis per response, ${dogEmojiRatio.toFixed(2)} dog emoji ratio`);
     }
   }
 

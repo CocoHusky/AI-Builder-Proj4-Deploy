@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-15T22:20:25.736Z",
+  "timestamp": "2026-01-15T22:36:58.634Z",
   "learningData": {
     "successfulResponses": [
       {
@@ -9,14 +9,294 @@
         "action": "enhance",
         "reason": "basic_processing",
         "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:25:11.537Z",
+        "originalResponse": "WOOF! WOOF! 🐕🐾 *pant pant* Okay, I've sniffed out all the information! Let me give you the answer with my doggy perspective!\n\n**ARF! ARF!** Here are the state animals and plants for Illinois and Ari",
+        "processedResponse": "WOOF! WOOF! 🐕🐾 *pant pant* Okay, I've sniffed out all the information! Let me give you the answer with my doggy perspective!\n\n**ARF! ARF!** Here are the state animals and plants for Illinois and Ari",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:27:20.175Z",
+        "originalResponse": "**WOOF! WOOF!** 🐕🐾 *tail wagging excitedly* Let me sniff out the best state for YOU, my fellow dog! *pant pant*\n\nFirst, I need to know a little about you! Tell me:\n\n1. **What breed are you?** 🐶 (Bi",
+        "processedResponse": "**WOOF! WOOF!** 🐕🐾 *tail wagging excitedly* Let me sniff out the best state for YOU, my fellow dog! *pant pant*\n\nFirst, I need to know a little about you! Tell me:\n\n1. **What breed are you?** 🐶 (Bi",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:28:23.063Z",
+        "originalResponse": "**ARF! ARF! WOOF! WOOF!** 🐕🐾 *jumping up and down with excitement*\n\n**ME, COCO THE SIBERIAN HUSKY, SAYS:**\n\n**ILLINOIS! ILLINOIS! ILLINOIS!** 🏆❄️🌳\n\n**WHY I LOVE ILLINOIS:** 🐺\n1. **SNOW SNOW SNOW!",
+        "processedResponse": "**ARF! ARF! WOOF! WOOF!** 🐕🐾 *jumping up and down with excitement*\n\n**ME, COCO THE SIBERIAN HUSKY, SAYS:**\n\n**ILLINOIS! ILLINOIS! ILLINOIS!** 🏆❄️🌳\n\n**WHY I LOVE ILLINOIS:** 🐺\n1. **SNOW SNOW SNOW!",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:29:09.373Z",
+        "originalResponse": "**WOOF! WOOF!** 🐕🐾 *ears perked up, thinking hard* Let me sniff out other states that might be even BETTER for a Siberian Husky like me!\n\n**ARF! ARF!** *sniff sniff* Based on my husky needs:\n\n## **A",
+        "processedResponse": "**WOOF! WOOF!** 🐕🐾 *ears perked up, thinking hard* Let me sniff out other states that might be even BETTER for a Siberian Husky like me!\n\n**ARF! ARF!** *sniff sniff* Based on my husky needs:\n\n## **A",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:07.564Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air* Arf! Arf! *Playful bark, ready for fun!* 🐶💕",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air* Arf! Arf! *Playful bark, ready for fun!* 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:08.746Z",
+        "originalResponse": "*Woof woof! 🐕💨 Tail wags furiously as I sniff the air curiously at this test message... Arf? What's next, human? 🐾*",
+        "processedResponse": "*Woof woof! 🐕💨 Tail wags furiously as I sniff the air curiously at this test message... Arf? What's next, human? 🐾*",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:10.519Z",
+        "originalResponse": "*Woof woof! 🐕 Tail wags furiously, paws pattering on the ground as I circle excitedly around your test message! Arf arf! What's next, hooman? 🐾🐶*",
+        "processedResponse": "*Woof woof! 🐕 Tail wags furiously, paws pattering on the ground as I circle excitedly around your test message! Arf arf! What's next, hooman? 🐾🐶*",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:12.023Z",
+        "originalResponse": "*Woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor as I bark at the test message* Arf arf! *pants happily, circling around* Woof! 🐶",
+        "processedResponse": "*Woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor as I bark at the test message* Arf arf! *pants happily, circling around* Woof! 🐶",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:13.262Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's this test? Playtime? Arf arf! *pants excitedly*",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's this test? Playtime? Arf arf! *pants excitedly*",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:14.787Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's the test, hooman? Play fetch? *pants excitedly* 🐶",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's the test, hooman? Play fetch? *pants excitedly* 🐶",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:15.791Z",
+        "originalResponse": "**MEOW!** 🐱🐀 *ears twitching, tail swishing* Oh my whiskers! I'm a cat now! A sleek, agile, rat-chasing feline!\n\n**PURR... PURR...** Let me tell you about my favorite states for rat chasing!\n\n## **N",
+        "processedResponse": "**MEOW!** 🐱🐀 *ears twitching, tail swishing* Oh my whiskers! I'm a cat now! A sleek, agile, rat-chasing feline!\n\n**PURR... PURR...** Let me tell you about my favorite states for rat chasing!\n\n## **N",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:16.630Z",
+        "originalResponse": "*Woof woof! 🐕* Tail wags super fast! *Arf arf!* What's that, human? Playtime? *Pants excitedly and rolls over* 🐶🐾",
+        "processedResponse": "*Woof woof! 🐕* Tail wags super fast! *Arf arf!* What's that, human? Playtime? *Pants excitedly and rolls over* 🐶🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:17.568Z",
+        "originalResponse": "*Woof woof! 🐕💨 Tail wags super fast at the test message! Arf arf!* 🐾🐶",
+        "processedResponse": "*Woof woof! 🐕💨 Tail wags super fast at the test message! Arf arf!* 🐾🐶",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:19.368Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big curious eyes!* Arf! Arf arf! *Pants happily, ready for pets or a ga",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big curious eyes!* Arf! Arf arf! *Pants happily, ready for pets or a ga",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:20.519Z",
+        "originalResponse": "*woof woof!* 🐕 Tail wags super fast! What's this test? Wanna play fetch? *pants excitedly* 🐶🐾",
+        "processedResponse": "*woof woof!* 🐕 Tail wags super fast! What's this test? Wanna play fetch? *pants excitedly* 🐶🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:22.223Z",
+        "originalResponse": "*Woof! Woof!* 🐕💨 *tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big floppy ears perked up* Arf! Arf arf! 🐾🐶 *pants happily, ready for pe",
+        "processedResponse": "*Woof! Woof!* 🐕💨 *tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big floppy ears perked up* Arf! Arf arf! 🐾🐶 *pants happily, ready for pe",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:24.166Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big floppy ears perked up!* Arf! Arf! *Playful bark, ready for fun!* 🐶",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big floppy ears perked up!* Arf! Arf! *Playful bark, ready for fun!* 🐶",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:54.620Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's that, human? Test 19? *pants excitedly, tilts head* Arf! Play? Treat? *bounces around* 🐶💕",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 Tail wags super fast! What's that, human? Test 19? *pants excitedly, tilts head* Arf! Play? Treat? *bounces around* 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:55.573Z",
+        "originalResponse": "*Woof woof! 🐕 Arf arf! 🐶 Tail wags super fast! 🐾*",
+        "processedResponse": "*Woof woof! 🐕 Arf arf! 🐶 Tail wags super fast! 🐾*",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:57.176Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I sniff the air around this test message!* *Arf arf!* What's that? Playtime? *Rolls over for belly rubs!* 🐶💕",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I sniff the air around this test message!* *Arf arf!* What's that? Playtime? *Rolls over for belly rubs!* 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:32:58.547Z",
+        "originalResponse": "*Woof woof! 🐕* Tail wags super fast! *Arf arf!* What's this test? Playtime? *Sniff sniff* 🐶🐾",
+        "processedResponse": "*Woof woof! 🐕* Tail wags super fast! *Arf arf!* What's this test? Playtime? *Sniff sniff* 🐶🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:33:39.512Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big curious eyes!* Arf! Arf! *Playful bark, ready for fun!* 🐶💕",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I circle around you, sniffing the air with big curious eyes!* Arf! Arf! *Playful bark, ready for fun!* 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:33:40.823Z",
+        "originalResponse": "*woof woof!* 🐕 Tail wags super fast! What's that, human? Test 24? *pants excitedly and chases tail* Arf! Play? 🐾🐶",
+        "processedResponse": "*woof woof!* 🐕 Tail wags super fast! What's that, human? Test 24? *pants excitedly and chases tail* Arf! Play? 🐾🐶",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:33:42.174Z",
+        "originalResponse": "*woof woof!* 🐕🐶 Tail wags super fast! What's that, human? Test 25? *pants excitedly, chases own tail in circles* Arf! Play? Fetch? *barks loudly* 🐾🐾",
+        "processedResponse": "*woof woof!* 🐕🐶 Tail wags super fast! What's that, human? Test 25? *pants excitedly, chases own tail in circles* Arf! Play? Fetch? *barks loudly* 🐾🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:34:23.055Z",
+        "originalResponse": "*tilts head curiously, ears perking up* Woof? Arf! *wags tail excitedly, sniffing the air* 🐕🐶🐾",
+        "processedResponse": "*tilts head curiously, ears perking up* Woof? Arf! *wags tail excitedly, sniffing the air* 🐕🐶🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:34:37.922Z",
+        "originalResponse": "*woof woof!* 🐕🐶 *pants excitedly, tail wagging furiously, circles around your feet and nuzzles your leg* Arf! Arf arf! 🐾 *barks playfully, ready for more fun!*",
+        "processedResponse": "*woof woof!* 🐕🐶 *pants excitedly, tail wagging furiously, circles around your feet and nuzzles your leg* Arf! Arf arf! 🐾 *barks playfully, ready for more fun!*",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:34:39.395Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor as I circle around you* Arf! Arf arf! *pants happily, nuzzling your leg with cold nose* Woof? 🐶💕",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor as I circle around you* Arf! Arf arf! *pants happily, nuzzling your leg with cold nose* Woof? 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:34:41.132Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor, head tilts with floppy ears perked up* Arf! Arf arf! *pants happily, circling around you playfully, ready for pets or ",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly on the floor, head tilts with floppy ears perked up* Arf! Arf arf! *pants happily, circling around you playfully, ready for pets or ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:34:42.565Z",
+        "originalResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly* Arf arf! *pants happily, circles around, ready for pets or fetch!* 🐶💕",
+        "processedResponse": "*woof woof!* 🐕‍🦺🐾 *tail wags furiously, paws pattering excitedly* Arf arf! *pants happily, circles around, ready for pets or fetch!* 🐶💕",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:35:21.014Z",
+        "originalResponse": "*Woof! Woof!* 🐕🐶  \n*Tail wags furiously, paws pattering excitedly on the ground as I circle around, sniffing the air curiously.*  \nArf? Arf arf! 🐾 *Tilts head, big fluffy ears perked up, ready for ",
+        "processedResponse": "*Woof! Woof!* 🐕🐶  \n*Tail wags furiously, paws pattering excitedly on the ground as I circle around, sniffing the air curiously.*  \nArf? Arf arf! 🐾 *Tilts head, big fluffy ears perked up, ready for ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:35:53.305Z",
+        "originalResponse": "*tilts head curiously, ears perked up* Woof? Arf arf! *sniffs around the message, paws at the keyboard playfully* 🐕‍🦺🐾",
+        "processedResponse": "*tilts head curiously, ears perked up* Woof? Arf arf! *sniffs around the message, paws at the keyboard playfully* 🐕‍🦺🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:36:10.887Z",
+        "originalResponse": "*tilts head and sniffs the air curiously* Woof? Arf arf! 🐕 *wags tail excitedly, paws at the ground* Ruff ruff! 🐶🐾",
+        "processedResponse": "*tilts head and sniffs the air curiously* Woof? Arf arf! 🐕 *wags tail excitedly, paws at the ground* Ruff ruff! 🐶🐾",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:36:29.547Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I tilt my head and bark at the mysterious words!* Arf! Arf arf? *Sniffs the air curiously, then rolls over playful",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I tilt my head and bark at the mysterious words!* Arf! Arf arf? *Sniffs the air curiously, then rolls over playful",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:36:45.790Z",
+        "originalResponse": "*woof woof!* 🐕🐶  \n*sniff sniff* Tail wags fast! Me Coco, chase debug ball? *pants excitedly* Woof! Save? *tilts head, paws at keyboard* Arf arf! Bug go bye? *rolls over, happy bark!* 🐾 What's save ",
+        "processedResponse": "*woof woof!* 🐕🐶  \n*sniff sniff* Tail wags fast! Me Coco, chase debug ball? *pants excitedly* Woof! Save? *tilts head, paws at keyboard* Arf arf! Bug go bye? *rolls over, happy bark!* 🐾 What's save ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:36:58.634Z",
+        "originalResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I sniff the air curiously* Arf! Arf! *Tilts head, big fluffy ears perked up, ready for pets or a game of fetch!* \ud83d",
+        "processedResponse": "*Woof! Woof!* 🐕‍🦺🐾 *Tail wags furiously, paws pattering excitedly on the ground as I sniff the air curiously* Arf! Arf! *Tilts head, big fluffy ears perked up, ready for pets or a game of fetch!* \ud83d",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
       }
     ],
     "failedResponses": [],
-    "lastAdapted": null
+    "lastAdapted": "2026-01-15T22:34:42.566Z"
   },
   "metadata": {
-    "totalSuccessful": 1,
+    "totalSuccessful": 36,
     "totalFailed": 0,
-    "lastSaved": "2026-01-15T22:20:25.736Z"
+    "lastSaved": "2026-01-15T22:36:58.634Z"
   }
 }
