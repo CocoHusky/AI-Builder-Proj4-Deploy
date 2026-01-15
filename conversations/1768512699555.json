@@ -1,0 +1,52 @@
+{
+  "id": "1768512699555",
+  "title": "test",
+  "messages": [
+    {
+      "role": "user",
+      "content": "test"
+    },
+    {
+      "role": "assistant",
+      "content": "🐕 Woof woof! *tail wags excitedly* Hello there! 🐶 I'm Coco the Siberian Husky! 🐾 *bounces around the room* Are you ready to play? I love chasing balls, going for walks, and sniffing everything! What's your favorite thing to do? *tilts head curiously* 🐕 🐕",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    },
+    {
+      "role": "user",
+      "content": "Are you a cat or dog"
+    },
+    {
+      "role": "assistant",
+      "content": "🐕 *wags tail* I chase cat all the time, but I'm still Coco! Want to hear about my squirrel stories? 🐿️",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    },
+    {
+      "role": "user",
+      "content": "are you a dog?"
+    },
+    {
+      "role": "assistant",
+      "content": "🐕 Woof woof! *tail wags so fast it blurs* YES! I'm Coco the Siberian Husky dog! 🐶 *bounces around excitedly* I have fluffy white and gray fur, bright blue eyes, and I love chasing squirrels! 🐾 Want to see me do a trick? I can fetch, sit, and give paw! *tilts head with a happy doggy smile* 🐕🐶🐾 🐕",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    },
+    {
+      "role": "user",
+      "content": "name the list of state animals and plants in illinois"
+    },
+    {
+      "role": "assistant",
+      "content": "🐕 Woof woof! *tail wags excitedly* I found all the Illinois state animals and plants! 🐶 *bounces around happily* Let me tell you about them! 🐾\n\n**ILLINOIS STATE ANIMALS:**\n🐕 *tilts head* There are 9 official state animals in Illinois!\n1. **State Animal:** White-tailed deer 🦌 *wags tail* I'd love to chase one!\n2. **State Bird:** Northern cardinal 🐦 \n3. **State Fish:** Bluegill 🐟\n4. **State Insect:** Monarch butterfly 🦋\n5. **State Reptile:** Painted turtle 🐢\n6. **State Amphibian:** Eastern tiger salamander 🦎\n7. **State Snake:** Eastern milksnake 🐍\n8. **State Fossil:** Tully monster 🦑\n9. **State Pet:** Shelter dogs and cats! 🐕🐱 *bounces excitedly* That's me! I'm a shelter dog!\n\n**ILLINOIS STATE PLANTS:**\n🐶 *sniffs around* The plants are so interesting!\n1. **State Flower:** Violet (blue violet) 🌸\n2. **State Tree:** White oak 🌳 *wags tail* I love chasing squirrels up oak trees!\n3. **State Prairie Grass:** Big bluestem 🌾\n4. **State Wildflower:** Milkweed 🌼\n5. **State Fruit:** GoldRush apple 🍎\n6. **State Vegetable:** Sweet corn 🌽\n7. **State Grain:** Corn 🌽\n8. **State Fungus:** Giant puffball mushroom 🍄 (new in 2024!)\n\n🐾 *tail wags so fast it blurs* There are so many more symbols too! State pie is pumpkin pie, state rock is dolostone, and state exercise is cycling! 🐕 I'd love to chase a cyclist through a field of violets under a white oak tree! 🐶🐾 🐕 🐶",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    }
+  ],
+  "model": "gpt-5",
+  "timestamp": "2026-01-15T21:33:36.283Z"
+}

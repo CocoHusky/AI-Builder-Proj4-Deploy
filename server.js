@@ -35,9 +35,6 @@ const modelCapabilities = {
   'supermind-agent-v1': ['text', 'web_search']
 };
 
-// Import personality guard system
-const personalityGuard = require('./personality-guard');
-
 // Chat with AI models
 app.post('/chat', async (req, res) => {
   const { messages, model = 'grok-4-fast' } = req.body;
@@ -218,15 +215,6 @@ app.delete('/conversations/:id', async (req, res) => {
   }
 });
 
-// Debug endpoint to check environment
-app.get('/debug', (req, res) => {
-  res.json({
-    ai_builder_token_set: !!process.env.AI_BUILDER_TOKEN,
-    node_env: process.env.NODE_ENV,
-    port: process.env.PORT
-  });
-});
-
 // Serve chat interface
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -236,7 +224,9 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, '0.0.0.0', () => {
+  const url = `http://localhost:${PORT}`;
   console.log(`🐕 Coco Chat server running on port ${PORT}`);
+  console.log(`🌐 Open your browser: ${url}`);
   console.log(`🐶 Woof woof! Ready to chat with your furry AI friend!`);
 
   // Log environment info for debugging
