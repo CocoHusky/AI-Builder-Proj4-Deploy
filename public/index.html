@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coco Chat 🐕</title>
+    <style>
+        :root {
+            --bg-primary: #2d4a3e;  /* Dark forest green - dog park theme */
+            --bg-secondary: #3a5f4a; /* Medium forest green */
+            --bg-tertiary: #1e3529;  /* Darker forest green */
+            --text-primary: #f8f9fa; /* Light cream */
+            --text-secondary: #d4edda; /* Light green */
+            --accent: #ffc107; /* Golden yellow - like dog fur */
+            --border: #6c757d; /* Medium gray */
+            --user-bg: #2d4a3e; /* Same as primary */
+            --assistant-bg: #495057; /* Dark gray with green tint */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .new-chat-btn {
+            width: calc(100% - 24px);
+            padding: 12px 16px;
+            margin: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .new-chat-btn:hover {
+            background: #0e9380;
+        }
+
+        .model-selector {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .model-selector select {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .model-selector select option {
+            padding: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .model-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .model-current {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .model-capabilities {
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 2px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .chat-item.active {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        /* Disabled state during loading */
+        .sidebar.loading .chat-item {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .sidebar.loading .new-chat-btn {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .chat-title {
+            flex: 1;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .chat-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* Main Chat Area */
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            padding-bottom: 140px; /* Space for fixed input area */
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .welcome p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* Messages */
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 140px; /* Space for fixed input area */
+        }
+
+        .message {
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: var(--user-bg);
+            border: 1px solid var(--border);
+        }
+
+        .message.assistant .message-content {
+            background: var(--assistant-bg);
+            border: 1px solid var(--border);
+        }
+
+        /* Input Area */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 260px; /* Width of sidebar */
+            right: 0;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .model-info-bar {
+            text-align: center;
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .input-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+
+
+        .input-container textarea {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            min-height: 20px;
+            max-height: 200px;
+            outline: none;
+        }
+
+        .input-container textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .send-btn:hover {
+            background: #0e9380;
+        }
+
+        .send-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .typing-indicator .message-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--assistant-bg);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            border-radius: 18px;
+        }
+
+        .typing-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .cancel-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            margin-left: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+                <button class="new-chat-btn" onclick="createNewChat()">New Chat</button>
+
+            <div class="model-selector">
+                <select id="modelSelect" onchange="changeModel(this.value)">
+                    <!-- Models will be loaded dynamically -->
+                </select>
+            </div>
+
+            <div class="chat-list" id="chatList">
+                <!-- Chat items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-chat">
+            <div class="welcome" id="welcome">
+                <h1>Coco Chat 🐕</h1>
+                <p>🐾 Woof woof! Ready to chat with your furry AI friend? 🐶</p>
+                <button class="new-chat-btn" onclick="createNewChat()">🐕 Start Chatting</button>
+            </div>
+
+            <div class="messages" id="messages" style="display: none;">
+                <!-- Messages will be added here -->
+            </div>
+
+            <div class="input-area" id="inputArea" style="display: none;">
+                <div class="model-info-bar">
+                    <div class="model-current">
+                        <strong id="modelInfo">Grok-4-Fast</strong>
+                    </div>
+                    <div class="model-capabilities" id="modelCapabilities">
+                        💬 Text Chat
+                    </div>
+                </div>
+
+
+                <div class="input-container">
+                    <textarea
+                        id="messageInput"
+                        placeholder="🐕 Woof! What's on your mind, human? 🐶"
+                        rows="1"
+                        onkeydown="handleKeyPress(event)"
+                        onpaste="handlePaste(event)"
+                    ></textarea>
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let activeChat = null;
+        let isLoading = false;
+        let currentModel = null; // Will be set dynamically from API
+
+        // Load conversations on startup
+        loadConversations();
+
+        function createNewChat() {
+            // Prevent creating new conversations while a message is being sent
+            if (isLoading) {
+                alert('🐶 Woof! Please wait for Coco to finish responding before creating a new conversation! 🐕');
+                return;
+            }
+
+            activeChat = {
+                id: Date.now().toString(),
+                title: 'New Chat',
+                messages: [],
+                model: currentModel, // currentModel should always be the raw ID
+                timestamp: new Date().toISOString()
+            };
+
+            showChatInterface();
+            renderMessages();
+            updateModelInfo();
+            updateSidebarHighlighting();
+            saveConversation();
+        }
+
+        // Generate conversation title from first user message
+        function generateConversationTitle(messages) {
+            const firstUserMessage = messages.find(msg => msg.role === 'user');
+            if (!firstUserMessage) return 'New Chat';
+
+            // Take first 50 characters of the message
+            const content = firstUserMessage.content;
+            if (content.length <= 50) return content;
+
+            // Try to cut at word boundary
+            const truncated = content.substring(0, 50);
+            const lastSpace = truncated.lastIndexOf(' ');
+            return lastSpace > 0 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
+        }
+
+        function showChatInterface() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('messages').style.display = 'block';
+            document.getElementById('inputArea').style.display = 'block';
+        }
+
+        function renderMessages() {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
+
+            if (!activeChat) return;
+
+            // Add messages
+            activeChat.messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.role}`;
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = message.content;
+
+                messageDiv.appendChild(contentDiv);
+                messagesDiv.appendChild(messageDiv);
+            });
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Update model info near input area
+            updateModelInfo();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (!input.value.trim() || isLoading || !activeChat) return;
+
+            // Capture the current conversation to ensure messages go to the right chat
+            const targetChat = activeChat;
+            const conversationId = targetChat.id;
+
+            const userMessage = {
+                role: 'user',
+                content: input.value.trim()
+            };
+
+            targetChat.messages.push(userMessage);
+            input.value = '';
+            isLoading = true;
+            updateLoadingState();
+            sendBtn.disabled = true;
+            sendBtn.textContent = '...';
+
+            renderMessages();
+            showTypingIndicator();
+
+            const modelToUse = targetChat.model || currentModel;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: targetChat.messages,
+                        model: modelToUse
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.choices && data.choices[0]) {
+                    const assistantMessage = data.choices[0].message;
+
+                    // Only add response to the target conversation if it's still the active one
+                    // or if we can find it in our conversations
+                    if (activeChat && activeChat.id === conversationId) {
+                activeChat.messages.push(assistantMessage);
+                        hideTypingIndicator();
+                renderMessages();
+                        saveConversation();
+                    } else {
+                        // If user switched conversations, save the response to the correct conversation
+                        targetChat.messages.push(assistantMessage);
+                        // Save this specific conversation
+                        await fetch('/conversations', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(targetChat)
+                        });
+                        hideTypingIndicator();
+                        loadConversations();
+                    }
+                }
+            } catch (error) {
+                const errorMessage = { role: 'assistant', content: `Error: ${error.message}` };
+
+                // Same logic - ensure error goes to the correct conversation
+                if (activeChat && activeChat.id === conversationId) {
+                activeChat.messages.push(errorMessage);
+                    hideTypingIndicator();
+                renderMessages();
+                } else {
+                    targetChat.messages.push(errorMessage);
+                    await fetch('/conversations', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(targetChat)
+                    });
+                    hideTypingIndicator();
+                    loadConversations();
+                }
+            } finally {
+                isLoading = false;
+                updateLoadingState();
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function changeModel(model) {
+            currentModel = model;
+            if (activeChat) {
+                activeChat.model = currentModel; // Always use the raw model ID, not display name
+                saveConversation();
+            }
+            updateModelInfo();
+        }
+
+        async function saveConversation() {
+            if (!activeChat) return;
+
+            // Generate a proper title from the conversation content
+            if (activeChat.messages.length > 0 && activeChat.title === 'New Chat') {
+                activeChat.title = generateConversationTitle(activeChat.messages);
+            }
+
+            try {
+                await fetch('/conversations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(activeChat)
+                });
+                loadConversations();
+            } catch (error) {
+                console.error('Save failed:', error);
+            }
+        }
+
+        async function loadConversations() {
+            try {
+                const response = await fetch('/conversations');
+                const conversations = await response.json();
+
+            const chatList = document.getElementById('chatList');
+            chatList.innerHTML = '';
+
+                conversations.forEach(conv => {
+                    const item = document.createElement('div');
+                    item.className = 'chat-item' + (activeChat && activeChat.id === conv.id ? ' active' : '');
+                    item.onclick = (e) => {
+                        e.preventDefault();
+                        loadConversation(conv.id);
+                    };
+
+                    const title = document.createElement('div');
+                    title.className = 'chat-title';
+
+                    // Use the conversation title, or generate from first message if it's still "New Chat"
+                    let displayTitle = conv.title;
+                    if (conv.title === 'New Chat' && conv.messages && conv.messages.length > 0) {
+                        displayTitle = generateConversationTitle(conv.messages);
+                    }
+                    title.textContent = displayTitle;
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = '×';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteConversation(conv.id);
+                    };
+
+                    item.appendChild(title);
+                    item.appendChild(deleteBtn);
+                    chatList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Load conversations failed:', error);
+            }
+        }
+
+        async function loadConversation(id) {
+            try {
+                // Prevent switching conversations while a message is being sent
+                if (isLoading) {
+                    alert('🐶 Woof! Please wait for Coco to finish responding before switching conversations! 🐕');
+                    return;
+                }
+
+                const response = await fetch(`/conversations/${id}`);
+                activeChat = await response.json();
+
+                // Get the saved model, defaulting to current or fallback
+                let savedModel = activeChat.model || currentModel || 'grok-4-fast';
+
+                // Clean up any emoji formatting that might have been saved
+                const knownModelIds = Object.keys(modelCapabilities);
+
+                // If the saved model looks like a display name with emojis, convert it back
+                if (savedModel.includes('💬') || savedModel.includes('🎨') || savedModel.includes('❓')) {
+                    // Find the raw ID for this display name
+                    const rawId = Object.keys(modelNames).find(id => modelNames[id] === savedModel);
+                    if (rawId) {
+                        savedModel = rawId;
+                    }
+                }
+
+                // Ensure the model is valid, fallback if not
+                if (!knownModelIds.includes(savedModel)) {
+                    savedModel = knownModelIds[0] || 'grok-4-fast';
+                }
+
+                currentModel = savedModel;
+                activeChat.model = savedModel; // Update with clean model ID
+                const select = document.getElementById('modelSelect');
+                select.value = currentModel;
+                    showChatInterface();
+                renderMessages();
+                updateModelInfo();
+                updateSidebarHighlighting(); // Update sidebar highlighting
+            } catch (error) {
+                console.error('Load conversation failed:', error);
+            }
+        }
+
+        async function deleteConversation(id) {
+            try {
+                await fetch(`/conversations/${id}`, { method: 'DELETE' });
+                if (activeChat && activeChat.id === id) {
+                    activeChat = null;
+                    document.getElementById('welcome').style.display = 'flex';
+                    document.getElementById('messages').style.display = 'none';
+                    document.getElementById('inputArea').style.display = 'none';
+                }
+                loadConversations();
+                updateSidebarHighlighting();
+            } catch (error) {
+                console.error('Delete failed:', error);
+            }
+        }
+
+        // Clean model display names (no emojis)
+        const modelNames = {
+            'deepseek': 'DeepSeek',
+            'gpt-5': 'GPT-5',
+            'gpt-image-1.5': 'GPT Image 1.5',
+            'grok-4-fast': 'Grok-4-Fast',
+            'gemini-2.5-pro': 'Gemini 2.5 Pro',
+            'gemini-3-flash-preview': 'Gemini 3 Flash',
+            'gemini-2.5-flash-image': 'Gemini Image',
+            'supermind-agent-v1': 'Supermind Agent'
+        };
+
+        // Model capabilities for reference
+        const modelCapabilities = {
+            'deepseek': ['text'],
+            'gpt-5': ['text', 'vision'],
+            'gpt-image-1.5': ['image_generation'],
+            'grok-4-fast': ['text'],
+            'gemini-2.5-pro': ['text', 'vision'],
+            'gemini-3-flash-preview': ['text', 'vision'],
+            'gemini-2.5-flash-image': ['image_generation'],
+            'supermind-agent-v1': ['text', 'web_search']
+        };
+
+        // Update model info display near input area
+        function updateModelInfo() {
+            const modelInfoDiv = document.getElementById('modelInfo');
+            const capabilitiesDiv = document.getElementById('modelCapabilities');
+
+            if (modelInfoDiv && capabilitiesDiv) {
+                // Show clean model name
+                const displayName = modelNames[currentModel] || currentModel;
+                modelInfoDiv.textContent = displayName;
+
+                // Show capabilities
+                const caps = modelCapabilities[currentModel];
+                if (caps) {
+                    const capabilityDescriptions = {
+                        'text': '💬 Text Chat',
+                        'vision': '🔍 Image Analysis',
+                        'image_generation': '🎨 Image Generation',
+                        'web_search': '🌐 Web Search'
+                    };
+                    const descriptions = caps.map(cap => capabilityDescriptions[cap]).join(' • ');
+                    capabilitiesDiv.textContent = descriptions;
+
+                } else {
+                    capabilitiesDiv.textContent = '❓ Unknown capabilities';
+                }
+            }
+        }
+
+        // Get capability description for tooltips
+        function getModelDescription(modelId) {
+            const caps = modelCapabilities[modelId];
+            if (!caps) {
+                return 'Unknown model capabilities';
+            }
+            const descriptions = {
+                'text': 'Text chat',
+                'vision': 'Image analysis',
+                'image_generation': 'Image generation',
+                'web_search': 'Web search'
+            };
+            return caps.map(cap => descriptions[cap]).join(', ');
+        }
+
+        // Update sidebar highlighting for active conversation
+        function updateSidebarHighlighting() {
+            const chatItems = document.querySelectorAll('.chat-item');
+            chatItems.forEach(item => {
+                // Remove active class from all items
+                item.classList.remove('active');
+
+                // Find the conversation ID from the onclick handler
+                const onclickAttr = item.onclick?.toString();
+                if (onclickAttr && activeChat) {
+                    const match = onclickAttr.match(/loadConversation\(['"]([^'"]+)['"]\)/);
+                    if (match && match[1] === activeChat.id) {
+                        item.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // Update loading state visual indicator
+        function updateLoadingState() {
+            const sidebar = document.querySelector('.sidebar');
+            if (isLoading) {
+                sidebar.classList.add('loading');
+                } else {
+                sidebar.classList.remove('loading');
+            }
+        }
+
+        // Show/hide typing indicator
+        function showTypingIndicator() {
+            const messagesDiv = document.getElementById('messages');
+            const existingTyping = messagesDiv.querySelector('.typing-indicator');
+            if (existingTyping) return; // Already showing
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant typing-indicator';
+
+            const typingContent = document.createElement('div');
+            typingContent.className = 'message-content typing';
+
+            const typingText = document.createElement('div');
+            typingText.className = 'typing-text';
+            typingText.textContent = '🐶 Coco is thinking';
+
+            const dots = document.createElement('div');
+            dots.className = 'typing-dots';
+            dots.innerHTML = '<span></span><span></span><span></span>';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'cancel-btn';
+            cancelBtn.textContent = 'cancel';
+            cancelBtn.title = 'Cancel request';
+            cancelBtn.onclick = cancelCurrentRequest;
+
+            typingContent.appendChild(typingText);
+            typingContent.appendChild(dots);
+            typingContent.appendChild(cancelBtn);
+            typingDiv.appendChild(typingContent);
+            messagesDiv.appendChild(typingDiv);
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.querySelector('.typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Cancel current request
+        function cancelCurrentRequest() {
+            if (isLoading) {
+                isLoading = false;
+                updateLoadingState();
+                hideTypingIndicator();
+
+                // Reset send button
+                const sendBtn = document.getElementById('sendBtn');
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+
+                // Add cancelled message
+                const cancelledMessage = {
+                    role: 'assistant',
+                    content: '🐶 Woof! Request cancelled by human 🐕'
+                };
+
+                if (activeChat) {
+                    activeChat.messages.push(cancelledMessage);
+            renderMessages();
+                    saveConversation();
+                }
+            }
+        }
+
+        // Load models
+        async function loadModels() {
+            const select = document.getElementById('modelSelect');
+            select.innerHTML = '<option>Loading models...</option>';
+
+            try {
+                const response = await fetch('/models');
+                    const data = await response.json();
+
+                if (data.data && Array.isArray(data.data)) {
+                    select.innerHTML = '';
+
+                    data.data.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.id; // Always use raw model ID as value
+                        // Use clean model name, or fallback to model ID
+                        const displayName = modelNames[model.id] || model.id;
+                        option.textContent = displayName;
+                        select.appendChild(option);
+                    });
+
+                    // Set default model
+                    if (data.data.length > 0) {
+                        currentModel = data.data[0].id;
+                        select.value = currentModel;
+                    }
+                } else {
+                    // Fallback to hardcoded models if API fails
+                    loadFallbackModels();
+                }
+            } catch (error) {
+                console.error('Load models failed:', error);
+                loadFallbackModels();
+            }
+        }
+
+        // Fallback models in case API fails
+        function loadFallbackModels() {
+            const select = document.getElementById('modelSelect');
+            select.innerHTML = '';
+
+            // Use all models from our mapping as fallback
+            Object.entries(modelNames).forEach(([id, name]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+
+            // Set first available model as default
+            const firstModel = Object.keys(modelNames)[0];
+            currentModel = firstModel;
+            select.value = currentModel;
+        }
+
+
+        // Handle file selection - DISABLED: AI Builder doesn't support images
+        function handleFileSelect(event) {
+            alert('Image analysis is not currently supported by AI Builder. This feature is disabled.');
+        }
+
+        // Trigger file input click - DISABLED: AI Builder doesn't support images
+        function triggerFileInput() {
+            alert('Image analysis is not currently supported by AI Builder. This feature is disabled.');
+        }
+
+        // Handle paste events for images - DISABLED: AI Builder doesn't support images
+        function handlePaste(event) {
+            const items = event.clipboardData?.items;
+            if (!items) return;
+
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    event.preventDefault();
+                    alert('Image analysis is not currently supported by AI Builder. This feature is disabled.');
+                    break;
+                }
+            }
+        }
+
+
+        loadModels();
+    </script>
+</body>
+</html>
