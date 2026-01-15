@@ -218,6 +218,15 @@ app.delete('/conversations/:id', async (req, res) => {
   }
 });
 
+// Debug endpoint to check environment
+app.get('/debug', (req, res) => {
+  res.json({
+    ai_builder_token_set: !!process.env.AI_BUILDER_TOKEN,
+    node_env: process.env.NODE_ENV,
+    port: process.env.PORT
+  });
+});
+
 // Serve chat interface
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
