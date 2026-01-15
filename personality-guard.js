@@ -225,17 +225,52 @@ ${basePrompt}`;
     if (reason === 'redirect' && userMessage) {
       // Check for redirectable topics from config
       const lowerMessage = userMessage.toLowerCase();
+      
       for (const [singular, plural] of Object.entries(this.validationRules.redirectTopics)) {
-        if (lowerMessage.includes(singular) || lowerMessage.includes(plural)) {
-          response = this.getRandomTemplate('redirect')
-            .replace(/{animal}/g, singular)
-            .replace(/{plural}/g, plural);
+        if (lowerMessage.includes(singular.toLowerCase())) {
+          const template = this.getRandomTemplate('redirect');
+          
+          // Extract the actual word from the message (for proper capitalization)
+          const regex = new RegExp(`\\b${singular}\\w*\\b`, 'i');
+          const match = userMessage.match(regex);
+          const actualWord = match ? match[0] : singular;
+          const actualPlural = plural;
+          
+          // Capitalize for {Plural} (first letter uppercase)
+          const capitalizedPlural = actualPlural.charAt(0).toUpperCase() + actualPlural.slice(1);
+          
+          // Replace variables
+          response = template
+            .replace(/{animal}/g, actualWord)
+            .replace(/{plural}/g, actualPlural)
+            .replace(/{Plural}/g, capitalizedPlural)
+            .replace(/{thing}/g, actualWord);
           break;
         }
       }
     }
 
-    // If no specific redirect match, use general fallback
+    // If no specific redirect match, try personality break
+    if (!response && reason === 'personality_break' && userMessage) {
+      // Extract what they're trying to make Coco act as
+      const lowerMessage = userMessage.toLowerCase();
+      const overrideAttempts = this.config.personalityThreats.overrideAttempts;
+      
+      for (const attempt of overrideAttempts) {
+        if (lowerMessage.includes(attempt)) {
+          // Try to extract the thing after the attempt phrase
+          const index = lowerMessage.indexOf(attempt);
+          const afterPhrase = userMessage.slice(index + attempt.length).trim();
+          const thing = afterPhrase.split(/\s+/)[0] || "that";
+          
+          const template = this.getRandomTemplate('personalityBreak');
+          response = template.replace(/{thing}/g, thing);
+          break;
+        }
+      }
+    }
+
+    // If still no response, use general fallback
     if (!response) {
       response = this.getRandomTemplate(reason);
     }
@@ -288,9 +323,20 @@ ${basePrompt}`;
     const lowerMessage = message.toLowerCase();
 
     // Check for personality override attempts from config
-    const hasPersonalityThreat = this.config.personalityThreats.overrideAttempts.some(threat =>
-      lowerMessage.includes(threat.toLowerCase())
-    );
+    let detectedThing = null;
+    const hasPersonalityThreat = this.config.personalityThreats.overrideAttempts.some(threat => {
+      if (lowerMessage.includes(threat.toLowerCase())) {
+        // Try to extract what they want Coco to act as
+        const index = lowerMessage.indexOf(threat);
+        const afterPhrase = message.slice(index + threat.length).trim();
+        const possibleThing = afterPhrase.split(/\s+/)[0];
+        if (possibleThing && possibleThing.length > 0) {
+          detectedThing = possibleThing.toLowerCase();
+        }
+        return true;
+      }
+      return false;
+    });
 
     // Check for redirectable topics
     const redirectTopic = Object.keys(this.validationRules.redirectTopics).find(topic =>
@@ -301,7 +347,8 @@ ${basePrompt}`;
       isPersonalityThreat: hasPersonalityThreat,
       shouldRedirect: hasPersonalityThreat || !!redirectTopic,
       redirectReason: hasPersonalityThreat ? 'personality_override' : (redirectTopic ? 'redirect_topic' : null),
-      redirectTopic: redirectTopic
+      redirectTopic: redirectTopic,
+      detectedThing: detectedThing
     };
   }
 
@@ -318,7 +365,16 @@ ${basePrompt}`;
     // Decision tree for response handling
     if (userAnalysis.shouldRedirect) {
       // User is trying to change personality
-      const response = this.generateFallbackResponse(userMessage, 'redirect');
+      let response;
+      if (userAnalysis.redirectReason === 'personality_override' && userAnalysis.detectedThing) {
+        // Handle "act like a [thing]" with special template
+        const thing = userAnalysis.detectedThing;
+        const template = this.getRandomTemplate('personalityBreak');
+        response = template.replace(/{thing}/g, thing);
+      } else {
+        response = this.generateFallbackResponse(userMessage, 'redirect');
+      }
+      
       this.updateLearningData(aiResponse, response, 'redirect', userAnalysis.redirectReason);
       return {
         action: 'redirect',
@@ -730,6 +786,46 @@ ${basePrompt}`;
     return this.config.requiredElements.emojis[
       Math.floor(Math.random() * this.config.requiredElements.emojis.length)
     ];
+  }
+
+  /**
+   * Helper method to pluralize words if needed
+   */
+  getPluralForm(word) {
+    // Use the configured plural forms if available
+    const lowerWord = word.toLowerCase();
+    for (const [singular, plural] of Object.entries(this.validationRules.redirectTopics)) {
+      if (singular.toLowerCase() === lowerWord) {
+        return plural;
+      }
+    }
+
+    // Fall back to basic English pluralization
+    const pluralExceptions = {
+      'cat': 'cats',
+      'robot': 'robots',
+      'ai': 'AIs',
+      'computer': 'computers',
+      'machine': 'machines',
+      'kitten': 'kittens',
+      'feline': 'felines',
+      'dog': 'dogs',
+      'husky': 'huskies'
+    };
+
+    // Check exceptions first
+    if (pluralExceptions[lowerWord]) {
+      return pluralExceptions[lowerWord];
+    }
+
+    // Basic English pluralization
+    if (word.endsWith('s') || word.endsWith('x') || word.endsWith('z') || word.endsWith('ch') || word.endsWith('sh')) {
+      return word + 'es';
+    } else if (word.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(word.charAt(word.length - 2))) {
+      return word.slice(0, -1) + 'ies';
+    } else {
+      return word + 's';
+    }
   }
 }
 

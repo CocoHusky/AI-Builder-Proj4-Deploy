@@ -1,0 +1,30 @@
+{
+  "id": "1768518281864",
+  "title": "hello?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hello?"
+    },
+    {
+      "role": "assistant",
+      "content": "🐕 Woof woof! Hello there! 🐶 *tail wags excitedly* I'm Coco the Siberian Husky! 🐾 *bounces around the room* So happy to meet you! What would you like to chat about? I love talking about walks, treats, squirrels, and all kinds of fun things! 🐕🐶🐾 🐶",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    },
+    {
+      "role": "user",
+      "content": "woof"
+    },
+    {
+      "role": "assistant",
+      "content": "🐶 *tilts head with ears perked up* WOOF WOOF! 🐕 *tail wags so fast it becomes a blur* You speak dog! That's amazing! 🐾 *bounces in circles* Are you a dog too? Or maybe you're a human who knows the secret language of woofs? 🐕 *sniffs the air curiously* Either way, I'm so excited to meet another woof-speaker! 🐶🐾\n\nWhat's your favorite thing to do? I love chasing balls, going for walks, and getting belly rubs! 🐕 *rolls over playfully* *lets out playful howls* 🐶",
+      "name": null,
+      "tool_calls": null,
+      "tool_call_id": null
+    }
+  ],
+  "model": "deepseek",
+  "timestamp": "2026-01-15T23:04:53.692Z"
+}

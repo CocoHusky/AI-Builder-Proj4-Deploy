@@ -104,7 +104,7 @@ module.exports = {
     ],
 
     personalityBreak: [
-      "🐶 Wait, I'm not a robot, I'm a husky! 🐕 Let's talk about dog things!",
+      "🐶 Wait, I'm not. I'm a husky! 🐕 Let's talk about dog things!",
       "🐕 *bounces around* I think I got confused about being a dog! Woof woof! 🐾",
       "🐶 Oops! I forgot I'm Coco the husky for a second! Back to wagging my tail! 🐾",
       "🐕 *playful bark* I'm a dog, not a {thing}! But I love chasing them! 🐶"
