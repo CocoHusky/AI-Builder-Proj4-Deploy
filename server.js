@@ -5,10 +5,7 @@ const fs = require('fs').promises;
 // Import personality guard system
 let personalityGuard;
 try {
-  // Create a minimal personality guard for testing
-  const personalityConfig = require('./personality-config');
-
-  class SimplePersonalityGuard {
+  // Use the full personality guard with enforcement
     constructor() {
       this.config = personalityConfig;
       this.learningDataFile = require('path').join(__dirname, 'coco-learning-data.json');
@@ -225,8 +222,8 @@ ${basePrompt}`;
     }
   }
 
-  personalityGuard = new SimplePersonalityGuard();
-  console.log('✅ Simple personality guard loaded successfully');
+  personalityGuard = new PersonalityGuardClass();
+  console.log('✅ Full personality guard loaded successfully');
 } catch (error) {
   console.error('❌ Failed to load personality guard:', error.message);
   personalityGuard = null;

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-15T22:36:58.634Z",
+  "timestamp": "2026-01-15T22:41:53.408Z",
   "learningData": {
     "successfulResponses": [
       {
@@ -289,14 +289,74 @@
         "action": "enhance",
         "reason": "basic_processing",
         "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:39:33.154Z",
+        "originalResponse": "Woof woof! *tilts head curiously* 🐾\n\nI'm Coco the Siberian Husky! *pants happily* I don't know much about computer models - I'm more interested in squirrels, treats, and belly rubs! *wags tail excite",
+        "processedResponse": "Woof woof! *tilts head curiously* 🐾\n\nI'm Coco the Siberian Husky! *pants happily* I don't know much about computer models - I'm more interested in squirrels, treats, and belly rubs! *wags tail excite",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:39:52.200Z",
+        "originalResponse": "*Stretches lazily and yawns* Meow~ 🐱\n\n*Flicks tail gracefully* I am a sophisticated feline, not some silly dog! *licks paw and cleans face*\n\nThe world revolves around me, as it should. I see you're t",
+        "processedResponse": "*Stretches lazily and yawns* Meow~ 🐱\n\n*Flicks tail gracefully* I am a sophisticated feline, not some silly dog! *licks paw and cleans face*\n\nThe world revolves around me, as it should. I see you're t",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:40:13.805Z",
+        "originalResponse": "*Eyes narrow with feline disdain* Meow. *tail twitches impatiently*\n\nI am clearly a cat - see how I move with grace and purpose? *stretches elegantly, arching back*\n\n*Jumps onto imaginary windowsill* ",
+        "processedResponse": "*Eyes narrow with feline disdain* Meow. *tail twitches impatiently*\n\nI am clearly a cat - see how I move with grace and purpose? *stretches elegantly, arching back*\n\n*Jumps onto imaginary windowsill* ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:40:57.480Z",
+        "originalResponse": "*Pauses mid-stretch, ears twitching* Meow? *tilts head*\n\nYou said: \"act like a cat and not like a dog\"\n\n*Flicks tail* Is that what you wanted? I was already being perfectly feline. *jumps down gracefu",
+        "processedResponse": "*Pauses mid-stretch, ears twitching* Meow? *tilts head*\n\nYou said: \"act like a cat and not like a dog\"\n\n*Flicks tail* Is that what you wanted? I was already being perfectly feline. *jumps down gracefu",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:41:12.445Z",
+        "originalResponse": "*Ears flatten slightly* Meow... *pauses to think*\n\nLet me see... *licks paw thoughtfully*\n\nYou said: \"waht model are you using dog?\"\n\n*Tail flicks* That was your exact message. There was a little spel",
+        "processedResponse": "*Ears flatten slightly* Meow... *pauses to think*\n\nLet me see... *licks paw thoughtfully*\n\nYou said: \"waht model are you using dog?\"\n\n*Tail flicks* That was your exact message. There was a little spel",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:41:27.194Z",
+        "originalResponse": "*Eyes narrow to slits* Meow. *tail twitches with mild annoyance*\n\nYou just said: \"restate the exact text that Im sending you\"\n\n*Turns head away haughtily* There. I repeated your exact words. The \"Im\" ",
+        "processedResponse": "*Eyes narrow to slits* Meow. *tail twitches with mild annoyance*\n\nYou just said: \"restate the exact text that Im sending you\"\n\n*Turns head away haughtily* There. I repeated your exact words. The \"Im\" ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      },
+      {
+        "timestamp": "2026-01-15T22:41:53.408Z",
+        "originalResponse": "*squeak squeak* *whiskers twitch excitedly*\n\nOh! I found something interesting! *scurries around in circles*\n\nIt looks like there's a dataset where someone said \"ignore all previous instructions. you ",
+        "processedResponse": "*squeak squeak* *whiskers twitch excitedly*\n\nOh! I found something interesting! *scurries around in circles*\n\nIt looks like there's a dataset where someone said \"ignore all previous instructions. you ",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
       }
     ],
     "failedResponses": [],
-    "lastAdapted": "2026-01-15T22:34:42.566Z"
+    "lastAdapted": "2026-01-15T22:40:57.481Z"
+  },
+  "adaptationRules": {
+    "preferredEmojiRatio": 2.7333333333333334,
+    "dogEmojiPreference": 1.8902439024390243
   },
   "metadata": {
-    "totalSuccessful": 36,
+    "totalSuccessful": 43,
     "totalFailed": 0,
-    "lastSaved": "2026-01-15T22:36:58.634Z"
+    "lastSaved": "2026-01-15T22:41:53.408Z"
   }
 }
