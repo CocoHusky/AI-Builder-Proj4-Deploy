@@ -53,7 +53,14 @@ class PersonalityGuard {
       successfulResponses: [],
       failedResponses: [],
       userRedirectPatterns: [],
-      adaptationRules: []
+      lastAdapted: null
+    };
+
+    // Adaptation rules learned from data
+    this.adaptationRules = {
+      enhancementPatterns: [],
+      preferredBehaviors: [],
+      validationAdjustments: {}
     };
   }
 
@@ -303,24 +310,36 @@ ${basePrompt}`;
     // Decision tree for response handling
     if (userAnalysis.shouldRedirect) {
       // User is trying to change personality
+      const response = this.generateFallbackResponse(userMessage, 'redirect');
+      this.updateLearningData(aiResponse, response, 'redirect', userAnalysis.redirectReason);
       return {
         action: 'redirect',
-        response: this.generateFallbackResponse(userMessage, 'redirect'),
+        response,
         reason: userAnalysis.redirectReason
       };
     } else if (!responseValidation.isValid) {
       // AI response doesn't meet personality standards
+      const response = this.attemptResponseFix(aiResponse, userMessage);
+      this.updateLearningData(aiResponse, response, 'fix_or_fallback', 'personality_inconsistent');
       return {
         action: 'fix_or_fallback',
-        response: this.attemptResponseFix(aiResponse, userMessage),
+        response,
         reason: 'personality_inconsistent',
         validation: responseValidation
       };
     } else {
-      // Response is good, enhance it slightly
+      // Response is good, enhance it using learned patterns
+      const response = this.enhancedEnhanceResponse(aiResponse);
+      this.updateLearningData(aiResponse, response, 'enhance', 'personality_good');
+
+      // Periodically adapt personality (every 10 successful responses)
+      if (this.learningData.successfulResponses.length % 10 === 0) {
+        this.adaptPersonality();
+      }
+
       return {
         action: 'enhance',
-        response: this.enhanceResponse(aiResponse),
+        response,
         reason: 'personality_good'
       };
     }
@@ -429,6 +448,222 @@ ${basePrompt}`;
 
     const recentSuccesses = this.learningData.successfulResponses.slice(-20);
     return recentSuccesses.length / 20; // Percentage of recent responses that were good
+  }
+
+  /**
+   * Active adaptation system - automatically improve personality consistency
+   */
+  adaptPersonality() {
+    if (!this.config.learning.feedbackLoopEnabled) return;
+
+    const stats = this.getPersonalityStats();
+    const failureRate = 1 - stats.successRate;
+
+    // Check if adaptation is needed
+    if (failureRate > this.config.learning.adaptationThreshold &&
+        stats.totalProcessed >= 20) {
+
+      console.log('🐕 Adapting personality based on learning data...');
+      console.log(`📊 Current stats: ${stats.successRate.toFixed(2)}% success rate, ${stats.totalProcessed} responses processed`);
+
+      // Adapt validation thresholds
+      this.adaptValidationThresholds(stats);
+
+      // Learn better enhancement patterns
+      this.learnEnhancementPatterns();
+
+      // Adapt behavior frequencies
+      this.adaptBehaviorFrequencies();
+
+      // Record adaptation timestamp
+      this.learningData.lastAdapted = new Date().toISOString();
+
+      console.log('✅ Personality adaptation complete!');
+      console.log(`🎯 New personality strength: ${(this.calculatePersonalityStrength() * 100).toFixed(1)}%`);
+    }
+  }
+
+  /**
+   * Adapt validation thresholds based on performance
+   */
+  adaptValidationThresholds(stats) {
+    const failureRate = 1 - stats.successRate;
+
+    // If failure rate is high, make validation more lenient
+    if (failureRate > 0.4) {
+      console.log('📉 High failure rate detected, making validation more lenient');
+      this.validationRules.qualityMetrics.dogWordRatio *= 0.8; // Reduce requirement
+      this.validationRules.qualityMetrics.emojiRatio *= 0.8;
+    }
+    // If success rate is very high, make validation stricter
+    else if (stats.successRate > 0.9) {
+      console.log('📈 High success rate detected, making validation stricter');
+      this.validationRules.qualityMetrics.dogWordRatio *= 1.1; // Increase requirement
+      this.validationRules.qualityMetrics.emojiRatio *= 1.1;
+    }
+  }
+
+  /**
+   * Learn better enhancement patterns from successful responses
+   */
+  learnEnhancementPatterns() {
+    const successfulResponses = this.learningData.successfulResponses.slice(-50);
+
+    // Analyze what enhancement patterns work best
+    const patternSuccess = {};
+
+    successfulResponses.forEach(entry => {
+      const pattern = this.analyzeEnhancementPattern(entry.originalResponse, entry.processedResponse);
+      patternSuccess[pattern] = (patternSuccess[pattern] || 0) + 1;
+    });
+
+    // Find the most successful patterns
+    const bestPatterns = Object.entries(patternSuccess)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3)
+      .map(([pattern]) => pattern);
+
+    // Update enhancement patterns to favor successful ones
+    if (bestPatterns.length > 0) {
+      this.adaptationRules.enhancementPatterns = bestPatterns;
+      console.log('🎯 Learned best enhancement patterns:', bestPatterns);
+    }
+  }
+
+  /**
+   * Analyze what enhancement pattern was used
+   */
+  analyzeEnhancementPattern(original, processed) {
+    const added = processed.replace(original, '').trim();
+
+    if (added.includes('*') && added.includes('🐕')) return 'behavior_and_emoji';
+    if (added.includes('*')) return 'behavior_only';
+    if (added.includes('🐕') || added.includes('🐶') || added.includes('🐾')) return 'emoji_only';
+    if (added.startsWith('🐕') || added.startsWith('🐶')) return 'prefix_emoji';
+    return 'other';
+  }
+
+  /**
+   * Adapt behavior frequencies based on learning data
+   */
+  adaptBehaviorFrequencies() {
+    const successfulResponses = this.learningData.successfulResponses.slice(-30);
+
+    // Count which behaviors appear most in successful responses
+    const behaviorCounts = {};
+    const allBehaviors = [
+      ...this.config.behaviors.greeting,
+      ...this.config.behaviors.thinking,
+      ...this.config.behaviors.excited,
+      ...this.config.behaviors.confused
+    ];
+
+    successfulResponses.forEach(entry => {
+      allBehaviors.forEach(behavior => {
+        if (entry.processedResponse.includes(behavior)) {
+          behaviorCounts[behavior] = (behaviorCounts[behavior] || 0) + 1;
+        }
+      });
+    });
+
+    // Find most successful behaviors
+    const topBehaviors = Object.entries(behaviorCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5)
+      .map(([behavior]) => behavior);
+
+    if (topBehaviors.length > 0) {
+      this.adaptationRules.preferredBehaviors = topBehaviors;
+      console.log('🐾 Learned preferred behaviors:', topBehaviors);
+    }
+  }
+
+  /**
+   * Get adaptation statistics
+   */
+  getAdaptationStats() {
+    return {
+      adaptationRules: this.adaptationRules,
+      lastAdapted: this.learningData.lastAdapted || null,
+      validationThresholds: this.validationRules.qualityMetrics,
+      personalityStrength: this.calculatePersonalityStrength()
+    };
+  }
+
+  /**
+   * Enhanced enhancement method using learned patterns
+   */
+  enhancedEnhanceResponse(response) {
+    // First try learned patterns if available
+    if (this.adaptationRules.enhancementPatterns && this.adaptationRules.enhancementPatterns.length > 0) {
+      const learnedPattern = this.adaptationRules.enhancementPatterns[
+        Math.floor(Math.random() * this.adaptationRules.enhancementPatterns.length)
+      ];
+
+      switch (learnedPattern) {
+        case 'behavior_and_emoji':
+          return this.applyBehaviorAndEmoji(response);
+        case 'behavior_only':
+          return this.applyBehaviorOnly(response);
+        case 'emoji_only':
+          return this.applyEmojiOnly(response);
+        case 'prefix_emoji':
+          return this.applyPrefixEmoji(response);
+      }
+    }
+
+    // Fall back to original enhancement logic
+    return this.enhanceResponse(response);
+  }
+
+  /**
+   * Apply learned enhancement patterns
+   */
+  applyBehaviorAndEmoji(response) {
+    const behavior = this.getRandomBehavior();
+    const emoji = this.getRandomDogEmoji();
+    return `${response} ${behavior} ${emoji}`;
+  }
+
+  applyBehaviorOnly(response) {
+    const behavior = this.getRandomBehavior();
+    return `${response} ${behavior}`;
+  }
+
+  applyEmojiOnly(response) {
+    const emoji = this.getRandomDogEmoji();
+    return `${response} ${emoji}`;
+  }
+
+  applyPrefixEmoji(response) {
+    const emoji = this.getRandomDogEmoji();
+    return `${emoji} ${response}`;
+  }
+
+  /**
+   * Helper methods for learned behaviors
+   */
+  getRandomBehavior() {
+    if (this.adaptationRules.preferredBehaviors && this.adaptationRules.preferredBehaviors.length > 0) {
+      return `*${this.adaptationRules.preferredBehaviors[
+        Math.floor(Math.random() * this.adaptationRules.preferredBehaviors.length)
+      ]}*`;
+    }
+
+    // Fall back to original behavior selection
+    const allBehaviors = [
+      ...this.config.behaviors.greeting,
+      ...this.config.behaviors.thinking,
+      ...this.config.behaviors.excited,
+      ...this.config.behaviors.confused
+    ];
+    return `*${allBehaviors[Math.floor(Math.random() * allBehaviors.length)]}*`;
+  }
+
+  getRandomDogEmoji() {
+    return this.config.requiredElements.emojis[
+      Math.floor(Math.random() * this.config.requiredElements.emojis.length)
+    ];
   }
 }
 
