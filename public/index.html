@@ -392,6 +392,19 @@
                 </select>
             </div>
 
+            <div style="padding: 12px; text-align: center;">
+                <button onclick="viewLearningData()" style="
+                    background: #17a2b8;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    margin-top: 8px;
+                ">🐕 View Learning Data</button>
+            </div>
+
             <div class="chat-list" id="chatList">
                 <!-- Chat items will be loaded here -->
             </div>
@@ -982,6 +995,11 @@
 
 
         loadModels();
+
+        // View learning data in new tab
+        function viewLearningData() {
+            window.open('/learning-view', '_blank');
+        }
     </script>
 </body>
 </html>

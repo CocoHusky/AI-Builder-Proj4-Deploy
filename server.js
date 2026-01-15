@@ -99,13 +99,10 @@ app.post('/chat', async (req, res) => {
 
       if (personalityGuard) {
         try {
-          // Process through personality guard
+          // Process through personality guard (includes learning data updates)
           const guardResult = personalityGuard.processChatMessage(userMessage, rawResponse);
           console.log('✅ Personality guard result:', guardResult.action, guardResult.reason);
           console.log('Final response:', guardResult.response.substring(0, 100) + '...');
-
-          // Update learning data
-          personalityGuard.updateLearningData(rawResponse, guardResult.response, guardResult.action, guardResult.reason);
 
           // Replace response with personality-corrected version
           data.choices[0].message.content = guardResult.response;
@@ -212,6 +209,144 @@ app.delete('/conversations/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug endpoint to view learning data (JSON)
+app.get('/learning-data', (req, res) => {
+  try {
+    const stats = personalityGuard.getPersonalityStats();
+    const adaptationStats = personalityGuard.getAdaptationStats();
+
+    res.json({
+      timestamp: new Date().toISOString(),
+      server: process.env.NODE_ENV || 'development',
+      learning_stats: stats,
+      adaptation_stats: adaptationStats,
+      raw_data: {
+        successful_responses_count: personalityGuard.learningData.successfulResponses.length,
+        failed_responses_count: personalityGuard.learningData.failedResponses.length,
+        total_processed: stats.totalProcessed,
+        last_successful_responses: personalityGuard.learningData.successfulResponses.slice(-5),
+        last_failed_responses: personalityGuard.learningData.failedResponses.slice(-3)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get learning data', details: error.message });
+  }
+});
+
+// HTML page to view learning data nicely
+app.get('/learning-view', (req, res) => {
+  try {
+    const stats = personalityGuard.getPersonalityStats();
+    const adaptationStats = personalityGuard.getAdaptationStats();
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐕 Coco Chat - Learning Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2d4a3e; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #2d4a3e; }
+        .stat-label { color: #666; margin-top: 5px; }
+        .data-section { margin: 30px 0; }
+        .response-item { background: #f8f9fa; margin: 10px 0; padding: 15px; border-radius: 6px; border-left: 4px solid #28a745; }
+        .response-meta { font-size: 12px; color: #666; margin-bottom: 10px; }
+        .response-content { font-family: monospace; white-space: pre-wrap; background: white; padding: 10px; border-radius: 4px; margin-top: 5px; }
+        .download-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px 0; }
+        .download-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐕 Coco Chat - Learning Data Dashboard</h1>
+
+        <button class="download-btn" onclick="downloadData()">📥 Download Learning Data (JSON)</button>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">${stats.totalProcessed}</div>
+                <div class="stat-label">Total Responses Processed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${(stats.successRate * 100).toFixed(1)}%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${(stats.personalityStrength * 100).toFixed(1)}%</div>
+                <div class="stat-label">Personality Strength</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${adaptationStats.lastAdapted ? new Date(adaptationStats.lastAdapted).toLocaleString() : 'Never'}</div>
+                <div class="stat-label">Last Adapted</div>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h2>🎯 Adaptation Rules Learned</h2>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px;">${JSON.stringify(adaptationStats.adaptationRules, null, 2)}</pre>
+        </div>
+
+        <div class="data-section">
+            <h2>✅ Recent Successful Responses (${personalityGuard.learningData.successfulResponses.length})</h2>
+            ${personalityGuard.learningData.successfulResponses.slice(-5).reverse().map(entry => `
+                <div class="response-item">
+                    <div class="response-meta">
+                        ${new Date(entry.timestamp).toLocaleString()} | Action: ${entry.action} | Reason: ${entry.reason}
+                    </div>
+                    <div class="response-content">${entry.processedResponse}</div>
+                </div>
+            `).join('')}
+        </div>
+
+        ${personalityGuard.learningData.failedResponses.length > 0 ? `
+        <div class="data-section">
+            <h2>❌ Recent Failed Responses (${personalityGuard.learningData.failedResponses.length})</h2>
+            ${personalityGuard.learningData.failedResponses.slice(-3).reverse().map(entry => `
+                <div class="response-item" style="border-left-color: #dc3545;">
+                    <div class="response-meta">
+                        ${new Date(entry.timestamp).toLocaleString()} | Action: ${entry.action} | Reason: ${entry.reason}
+                    </div>
+                    <div class="response-content">${entry.processedResponse}</div>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+
+        <div class="data-section">
+            <h2>📊 Validation Thresholds</h2>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px;">${JSON.stringify(adaptationStats.validationThresholds, null, 2)}</pre>
+        </div>
+    </div>
+
+    <script>
+        function downloadData() {
+            fetch('/learning-data')
+                .then(response => response.json())
+                .then(data => {
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = \`coco-learning-data-\${new Date().toISOString().split('T')[0]}.json\`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+        }
+    </script>
+</body>
+</html>`;
+    res.send(html);
+  } catch (error) {
+    res.status(500).send(`<h1>Error loading learning data</h1><p>${error.message}</p>`);
   }
 });
 
