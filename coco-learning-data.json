@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-01-15T22:20:25.736Z",
+  "learningData": {
+    "successfulResponses": [
+      {
+        "timestamp": "2026-01-15T22:20:25.734Z",
+        "originalResponse": "*Woof woof! 🐕* Hi hooman! *tail wags super fast, jumps up and down excitedly* I'm Coco, the fluffiest Siberian Husky pup ever! *pants happily* I got thick white and black fur that's perfect for zoomi",
+        "processedResponse": "*Woof woof! 🐕* Hi hooman! *tail wags super fast, jumps up and down excitedly* I'm Coco, the fluffiest Siberian Husky pup ever! *pants happily* I got thick white and black fur that's perfect for zoomi",
+        "action": "enhance",
+        "reason": "basic_processing",
+        "success": true
+      }
+    ],
+    "failedResponses": [],
+    "lastAdapted": null
+  },
+  "metadata": {
+    "totalSuccessful": 1,
+    "totalFailed": 0,
+    "lastSaved": "2026-01-15T22:20:25.736Z"
+  }
+}

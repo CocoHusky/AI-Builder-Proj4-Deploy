@@ -15,6 +15,7 @@
 
 const personalityConfig = require('./personality-config');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 
 class PersonalityGuard {
@@ -53,7 +54,7 @@ class PersonalityGuard {
     // Learning data file path
     this.learningDataFile = path.join(__dirname, 'coco-learning-data.json');
 
-    // Initialize learning data (load from file or create defaults)
+    // Initialize learning data
     this.learningData = {
       successfulResponses: [],
       failedResponses: [],
@@ -68,8 +69,7 @@ class PersonalityGuard {
       validationAdjustments: {}
     };
 
-    // Load learning data from file on startup
-    this.loadLearningData();
+    // Learning data will be loaded after server starts to avoid async issues
   }
 
   /**
@@ -397,40 +397,41 @@ ${basePrompt}`;
   }
 
   /**
-   * Load learning data from file on startup
+   * Load learning data from file on startup (async)
    */
-  async loadLearningData() {
+  async loadLearningDataFromFile() {
     try {
-      const data = await fs.readFile(this.learningDataFile, 'utf8');
-      const parsed = JSON.parse(data);
+      if (fsSync.existsSync(this.learningDataFile)) {
+        const data = fsSync.readFileSync(this.learningDataFile, 'utf8');
+        const parsed = JSON.parse(data);
 
-      // Validate and merge loaded data
-      if (parsed.learningData) {
-        this.learningData = {
-          ...this.learningData,
-          ...parsed.learningData
-        };
-      }
+        // Validate and merge loaded data
+        if (parsed.learningData) {
+          this.learningData = {
+            ...this.learningData,
+            ...parsed.learningData
+          };
+        }
 
-      if (parsed.adaptationRules) {
-        this.adaptationRules = {
-          ...this.adaptationRules,
-          ...parsed.adaptationRules
-        };
-      }
+        if (parsed.adaptationRules) {
+          this.adaptationRules = {
+            ...this.adaptationRules,
+            ...parsed.adaptationRules
+          };
+        }
 
-      console.log('✅ Loaded learning data from file:', this.learningData.successfulResponses.length, 'successful,', this.learningData.failedResponses.length, 'failed responses');
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        console.error('❌ Error loading learning data:', error.message);
+        console.log('✅ Loaded learning data from file:', this.learningData.successfulResponses.length, 'successful,', this.learningData.failedResponses.length, 'failed responses');
       } else {
         console.log('📄 No existing learning data file found, starting fresh');
       }
+    } catch (error) {
+      console.error('❌ Error loading learning data:', error.message);
+      console.log('📄 Starting with fresh learning data due to load error');
     }
   }
 
   /**
-   * Save learning data to file
+   * Save learning data to file (async)
    */
   async saveLearningData() {
     try {
@@ -479,9 +480,6 @@ ${basePrompt}`;
     if (this.learningData.failedResponses.length > 100) {
       this.learningData.failedResponses.shift();
     }
-
-    // Save to file after each update
-    await this.saveLearningData();
   }
 
   /**
@@ -545,9 +543,6 @@ ${basePrompt}`;
 
       // Record adaptation timestamp
       this.learningData.lastAdapted = new Date().toISOString();
-
-      // Save adaptation changes to file
-      await this.saveLearningData();
 
       console.log('✅ Personality adaptation complete!');
       console.log(`🎯 New personality strength: ${(this.calculatePersonalityStrength() * 100).toFixed(1)}%`);
@@ -738,5 +733,5 @@ ${basePrompt}`;
   }
 }
 
-// Export singleton instance
-module.exports = new PersonalityGuard();
+// Export the class (not an instance) to avoid constructor async issues
+module.exports = PersonalityGuard;

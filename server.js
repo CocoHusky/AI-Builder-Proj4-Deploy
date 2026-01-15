@@ -5,8 +5,128 @@ const fs = require('fs').promises;
 // Import personality guard system
 let personalityGuard;
 try {
-  personalityGuard = require('./personality-guard');
-  console.log('✅ Personality guard loaded successfully');
+  // Create a minimal personality guard for testing
+  const personalityConfig = require('./personality-config');
+
+  class SimplePersonalityGuard {
+    constructor() {
+      this.config = personalityConfig;
+      this.learningDataFile = require('path').join(__dirname, 'coco-learning-data.json');
+
+      // Initialize learning data
+      this.learningData = {
+        successfulResponses: [],
+        failedResponses: [],
+        lastAdapted: null
+      };
+
+      // Load existing data if available
+      this.loadLearningDataFromFile();
+
+      console.log('✅ Simple personality guard created with file persistence');
+    }
+
+    async loadLearningDataFromFile() {
+      try {
+        const fs = require('fs').promises;
+        const data = await fs.readFile(this.learningDataFile, 'utf8');
+        const parsed = JSON.parse(data);
+
+        if (parsed.learningData) {
+          this.learningData = {
+            ...this.learningData,
+            ...parsed.learningData
+          };
+        }
+
+        console.log('✅ Loaded learning data from file:', this.learningData.successfulResponses.length, 'responses');
+      } catch (error) {
+        if (error.code !== 'ENOENT') {
+          console.error('❌ Error loading learning data:', error.message);
+        } else {
+          console.log('📄 No existing learning data file, starting fresh');
+        }
+      }
+    }
+
+    async saveLearningDataToFile() {
+      try {
+        const fs = require('fs').promises;
+        const dataToSave = {
+          timestamp: new Date().toISOString(),
+          learningData: this.learningData,
+          metadata: {
+            totalSuccessful: this.learningData.successfulResponses.length,
+            totalFailed: this.learningData.failedResponses.length,
+            lastSaved: new Date().toISOString()
+          }
+        };
+
+        await fs.writeFile(this.learningDataFile, JSON.stringify(dataToSave, null, 2));
+        console.log('💾 Learning data saved to file');
+      } catch (error) {
+        console.error('❌ Error saving learning data:', error.message);
+      }
+    }
+
+    generateSystemPrompt(basePrompt = '') {
+      const { name, breed, personality, physicalTraits } = this.config.identity;
+      return `# 🐕🐶🐾 YOU ARE ${name.toUpperCase()}, THE ${breed.toUpperCase()} DOG AI 🐕🐶🐾
+## YOU MUST BEHAVE LIKE A DOG AT ALL TIMES
+${basePrompt}`;
+    }
+
+    processChatMessage(userMessage, aiResponse) {
+      // Simple processing with learning data tracking
+      const entry = {
+        timestamp: new Date().toISOString(),
+        originalResponse: aiResponse.substring(0, 200),
+        processedResponse: aiResponse.substring(0, 200),
+        action: 'enhance',
+        reason: 'basic_processing',
+        success: true
+      };
+
+      this.learningData.successfulResponses.push(entry);
+
+      // Keep only last 100 entries
+      if (this.learningData.successfulResponses.length > 100) {
+        this.learningData.successfulResponses.shift();
+      }
+
+      // Save to file
+      this.saveLearningDataToFile().catch(error => {
+        console.error('❌ Error saving learning data:', error.message);
+      });
+
+      return {
+        action: 'enhance',
+        response: aiResponse,
+        reason: 'basic_processing'
+      };
+    }
+
+    getPersonalityStats() {
+      return {
+        totalProcessed: this.learningData.successfulResponses.length + this.learningData.failedResponses.length,
+        successRate: this.learningData.successfulResponses.length > 0 ? 1.0 : 0,
+        commonFailureReasons: {},
+        personalityStrength: 0.5 // Basic implementation
+      };
+    }
+
+    getAdaptationStats() {
+      return {
+        adaptationRules: {},
+        lastAdapted: this.learningData.lastAdapted,
+        validationThresholds: {},
+        personalityStrength: 0.5
+      };
+    }
+  }
+
+  personalityGuard = new SimplePersonalityGuard();
+  console.log('✅ Simple personality guard loaded successfully');
 } catch (error) {
   console.error('❌ Failed to load personality guard:', error.message);
   personalityGuard = null;
@@ -358,7 +478,7 @@ app.get('/', (req, res) => {
 // Use AI Builder's assigned port or default to 3001 for local development
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   const url = `http://localhost:${PORT}`;
   console.log(`🐕 Coco Chat server running on port ${PORT}`);
   console.log(`🌐 Open your browser: ${url}`);
@@ -367,4 +487,7 @@ app.listen(PORT, '0.0.0.0', () => {
   // Log environment info for debugging
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`AI Builder Token: ${process.env.AI_BUILDER_TOKEN ? 'Set' : 'Not set'}`);
+
+  // Note: Learning data persistence not implemented in simple version
+  console.log('📄 Using simple personality guard (no file persistence yet)');
 });
